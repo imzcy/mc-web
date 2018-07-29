@@ -165,7 +165,7 @@ export default class Home extends Component {
 
         return (
             <div>
-                <img src={logo} style={{ width: '100%' }} alt='Minecraft Server Logo' />
+                <img src={logo} style={{ width: '100%', maxWidth: '480px' }} alt='Minecraft Server Logo' />
                 {
                     content
                 }
