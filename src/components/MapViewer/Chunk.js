@@ -23,7 +23,7 @@ function getColor(t) {
         return [112, 112, 112];
     case 0xc: case 0x18:
         return [247, 233, 163];
-    case 0x2e: case 0x11: case 0x10: case 0x98:
+    case 0x2e: case 0x10: case 0x98:
         return [255, 0, 0];
     case 0xae: case 0xd4: case 0x4f:
         return [160, 160, 255];
@@ -35,15 +35,19 @@ function getColor(t) {
         return [112, 112, 112];
     case 0x8: case 0x9:
         return [64, 64, 255];
+    case 0x7d: // Double wooden slab
+        return [247, 233, 163];
+    case 0x7e: // Wooden slab
+        return [247, 233, 163];
+    case 0xa2: // log2
+        return [247, 233, 163];
+    case 0x11: // Wood
+        return [247, 233, 163];
+    case 0x5: // 	Wood Planks
+        return [247, 233, 163];
     default:
-        // console.log(item, cat);
         return [0, 0, 0];
     }
-}
-
-const colors = {
-    2: [127, 178, 56],
-
 }
 
 export default class Chunk extends Component {

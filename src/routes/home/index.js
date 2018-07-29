@@ -11,7 +11,10 @@ import CancelableTimer from '../../utils/CancelableTimer';
 import RemoveCircleOutline from '@material-ui/icons/RemoveCircleOutline';
 import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
 import IconButton from '@material-ui/core/IconButton';
+import logo from '../../images/logo.jpg';
+import Typography from '@material-ui/core/Typography';
 // import styles from './style.css';
+import reactListKey from '../../utils/reactListKey';
 
 export default class Home extends Component {
 
@@ -45,7 +48,7 @@ export default class Home extends Component {
                             uuid,
                             name
                         }
-                    } catch(e) {
+                    } catch (e) {
 
                     }
                 }
@@ -94,7 +97,7 @@ export default class Home extends Component {
                 throw new Error(`There was an error kicking player.`);
             }
             alert(`This player was kicked successfully.`);
-        } catch(e) {
+        } catch (e) {
             alert(`There was an error kicking player.`);
         } finally {
             this.getUsers();
@@ -102,53 +105,70 @@ export default class Home extends Component {
     }
 
     render() {
+        let content = null;
         if (this.state.users === null) {
-            return (
-                <div>Loading online users...</div>
+            content = (
+                <Typography variant="headline" gutterBottom>
+                    Loading online users...
+                </Typography>
             );
-        }
-        if (this.state.users instanceof Error) {
-            return (
-                <div>Error loading online users.</div>
+        } else if (this.state.users instanceof Error) {
+            content = (
+                <Typography variant="headline" gutterBottom>
+                    Error loading online users.
+                </Typography>
             );
-        }
-        if (this.state.users.length === 0) {
-            return (
-                <div>There are no online users.</div>
+        } else if (this.state.users.length === 0) {
+            content = (
+                <Typography variant="headline" gutterBottom>
+                    There are no online users.
+                </Typography>
             );
-        }
-        return (
-            <div>
-                <div>Online users:</div>
-                <List component="nav">
-                    {
-                        this.state.users.map(({ id, afk }) => {
-                            if (afk !== true) {
+        } else {
+            content = (
+                <div>
+                    <Typography variant="headline" gutterBottom>
+                        Online users
+                    </Typography>
+                    <List component="nav">
+                        {
+                            this.state.users.map(({ id, afk }) => {
+                                if (afk !== true) {
+                                    return (
+                                        <ListItem button key={reactListKey(null)}>
+                                            <ListItemIcon>
+                                                <Face />
+                                            </ListItemIcon>
+                                            <ListItemText primary={this.state.userCache[id] ? this.state.userCache[id].name : id} secondary='Online' />
+                                        </ListItem>
+                                    );
+                                }
                                 return (
-                                    <ListItem button key={ id }>
+                                    <ListItem button key={reactListKey(null)}>
                                         <ListItemIcon>
                                             <Face />
                                         </ListItemIcon>
-                                        <ListItemText primary={this.state.userCache[id] ? this.state.userCache[id].name : id} secondary='Online' />
+                                        <ListItemText primary={this.state.userCache[id] ? this.state.userCache[id].name : id} secondary='AFK' />
+                                        <ListItemSecondaryAction>
+                                            <IconButton aria-label="Kick" onClick={this.removeUser.bind(this, id)}>
+                                                <RemoveCircleOutline />
+                                            </IconButton>
+                                        </ListItemSecondaryAction>
                                     </ListItem>
                                 );
-                            }
-                            return (
-                                <ListItem button key={ id }>
-                                    <ListItemIcon>
-                                        <Face />
-                                    </ListItemIcon>
-                                    <ListItemText primary={this.state.userCache[id] ? this.state.userCache[id].name : id} secondary='AFK' />
-                                    <ListItemSecondaryAction>
-                                        <IconButton aria-label="Kick" onClick={this.removeUser.bind(this, id)}>
-                                            <RemoveCircleOutline />
-                                        </IconButton>
-                                    </ListItemSecondaryAction>
-                                </ListItem>
-                            );
-                        })
-                    }
-                </List>
+                            })
+                        }
+                    </List>
+                </div>
+            )
+        }
+
+        return (
+            <div>
+                <img src={logo} style={{ width: '100%' }} alt='Minecraft Server Logo' />
+                {
+                    content
+                }
             </div>
         );
     }
