@@ -132,23 +132,24 @@ export default class Home extends Component {
                     </Typography>
                     <List component="nav">
                         {
-                            this.state.users.map(({ id, afk }) => {
+                            this.state.users.map(({ id, afk }, index) => {
+                                const name = this.state.userCache[id] ? this.state.userCache[id].name : id;
                                 if (afk !== true) {
                                     return (
-                                        <ListItem button key={reactListKey(null)}>
+                                        <ListItem button key={reactListKey(index.toFixed(0), name, 'online')}>
                                             <ListItemIcon>
                                                 <Face />
                                             </ListItemIcon>
-                                            <ListItemText primary={this.state.userCache[id] ? this.state.userCache[id].name : id} secondary='Online' />
+                                            <ListItemText primary={name} secondary='Online' />
                                         </ListItem>
                                     );
                                 }
                                 return (
-                                    <ListItem button key={reactListKey(null)}>
+                                    <ListItem button key={reactListKey(index.toFixed(0), name, 'afk')}>
                                         <ListItemIcon>
                                             <Face />
                                         </ListItemIcon>
-                                        <ListItemText primary={this.state.userCache[id] ? this.state.userCache[id].name : id} secondary='AFK' />
+                                        <ListItemText primary={name} secondary='AFK' />
                                         <ListItemSecondaryAction>
                                             <IconButton aria-label="Kick" onClick={this.removeUser.bind(this, id)}>
                                                 <RemoveCircleOutline />
