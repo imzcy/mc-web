@@ -42,6 +42,20 @@ class App extends Component {
         dispatch(push(path));
     }
 
+    actionTabInit = () => {
+        let { views } = this.props;
+        const hrefParsed = url.parse(window.location.href);
+        for (let tab = 0; tab < views.length; tab++) {
+            const { path } = views[tab];
+            if (hrefParsed.pathname === path) {
+                this.setState({
+                    tab: tab
+                });
+                return;
+            }
+        }
+    }
+
     render() {
         const { tab } = this.state;
         const { views } = this.props;
@@ -71,6 +85,10 @@ class App extends Component {
                 </BottomNavigation>
             </div>
         );
+    }
+
+    componentDidMount() {
+        this.actionTabInit();
     }
 }
 

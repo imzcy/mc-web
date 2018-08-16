@@ -15,9 +15,10 @@ export default class MapViewer extends Component {
 
     constructor(props) {
         super(props);
-        // this.handlerMouseDown = this.onMouseDown.bind(this);
+        this.handlerMouseDown = this.onMouseDown.bind(this);
         this.handlerMouseUp = this.onMouseUp.bind(this);
         this.handlerMouseMove = this.onMouseMove.bind(this);
+        this.handlerTouchStart = this.onTouchStart.bind(this);
         this.handlerTouchUp = this.onTouchUp.bind(this);
         this.handlerTouchMove = this.onTouchMove.bind(this);
         this.handlerResize = this.onResize.bind(this);
@@ -28,6 +29,7 @@ export default class MapViewer extends Component {
     }
 
     onTouchStart(e) {
+        e.preventDefault();
         this.dragStart = true;
         this.begX = this.state.centerX;
         this.begY = this.state.centerY;
@@ -36,12 +38,14 @@ export default class MapViewer extends Component {
     }
 
     onTouchUp(e) {
+        e.preventDefault();
         this.dragStart = false;
         this.dragX = null;
         this.dragY = null;
     }
 
     onTouchMove(e) {
+        e.preventDefault();
         if (!this.dragStart) {
             return;
         }
@@ -53,6 +57,7 @@ export default class MapViewer extends Component {
     }
 
     onMouseDown(e) {
+        e.preventDefault();
         this.dragStart = true;
         this.begX = this.state.centerX;
         this.begY = this.state.centerY;
@@ -61,12 +66,14 @@ export default class MapViewer extends Component {
     }
 
     onMouseUp(e) {
+        e.preventDefault();
         this.dragStart = false;
         this.dragX = null;
         this.dragY = null;
     }
 
     onMouseMove(e) {
+        e.preventDefault();
         if (!this.dragStart) {
             return;
         }
@@ -103,20 +110,24 @@ export default class MapViewer extends Component {
             });
         }, 50);
         window.addEventListener('resize', this.handlerResize);
-        // this.outerDiv.addEventListener('mousedown', this.handlerMouseDown);
+        this.outerDiv.addEventListener('mousedown', this.handlerMouseDown);
         document.addEventListener('mousemove', this.handlerMouseMove);
         document.addEventListener('mouseup', this.handlerMouseUp);
+        this.outerDiv.addEventListener('touchstart', this.handlerTouchStart);
         document.addEventListener('touchmove', this.handlerTouchMove);
         document.addEventListener('touchup', this.handlerTouchUp);
+        document.addEventListener('touchcancel', this.handlerTouchUp);
     }
 
     componentWillUnmount() {
         window.removeEventListener('resize', this.handlerResize);
-        // this.outerDiv.removeEventListener('mousedown', this.handlerMouseDown);
+        this.outerDiv.removeEventListener('mousedown', this.handlerMouseDown);
         document.removeEventListener('mousemove', this.handlerMouseMove);
         document.removeEventListener('mouseup', this.handlerMouseUp);
+        this.outerDiv.removeEventListener('touchstart', this.handlerTouchStart);
         document.removeEventListener('touchmove', this.handlerTouchMove);
         document.removeEventListener('touchup', this.handlerTouchUp);
+        document.removeEventListener('touchcancel', this.handlerTouchUp);
     }
 
     render() {
