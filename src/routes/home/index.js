@@ -6,7 +6,6 @@ import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
-import Face from '@material-ui/icons/Face';
 import CancelableTimer from '../../utils/CancelableTimer';
 import RemoveCircleOutline from '@material-ui/icons/RemoveCircleOutline';
 import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
@@ -15,6 +14,7 @@ import logo from '../../images/logo.jpg';
 import Typography from '@material-ui/core/Typography';
 // import styles from './style.css';
 import reactListKey from '../../utils/reactListKey';
+import McFaceViewer from '../../components/McFaceViewer';
 
 export default class Home extends Component {
 
@@ -32,24 +32,27 @@ export default class Home extends Component {
                     try {
                         const uuid_uri = url.resolve('https://api.minetools.eu/uuid/', id);
                         const { id: uuid, name } = await (await fetch(uuid_uri)).json();
-                        // const textures_uri = url.resolve('https://sessionserver.mojang.com/session/minecraft/profile/', uuid);
-                        // const { properties } = await (await fetch(textures_uri)).json();
-                        // let textures = null;
-                        // for (const { name, value } of properties) {
-                        //     if (name === 'textures') {
-                        //         textures = JSON.parse(value);
-                        //         break;
-                        //     }
-                        // }
-                        // if (textures === null) {
-                        //     throw new Error(`Unable to retrieve texture for user.`);
-                        // }
+                        let skin = null;
+                        try {
+                            const textures_uri = url.resolve('https://api.minetools.eu/profile/', uuid);
+                            const { decoded } = await (await fetch(textures_uri)).json();
+                            if (decoded.textures) {
+                                if (decoded.textures.SKIN) {
+                                    if (decoded.textures.SKIN.url) {
+                                        skin = url.resolve('http://api.mc.imzcy.com/', url.parse(decoded.textures.SKIN.url).pathname);
+                                    }
+                                }
+                            }
+                        } catch(e) {
+                            console.error(`Unable to obtain skin.`, e);
+                        }
                         userCache[id] = {
                             uuid,
-                            name
+                            name,
+                            skin
                         }
                     } catch (e) {
-
+                        console.error(`Unable to obtain info.`, e);
                     }
                 }
             }
@@ -138,7 +141,7 @@ export default class Home extends Component {
                                     return (
                                         <ListItem button key={reactListKey(index.toFixed(0), name, 'online')}>
                                             <ListItemIcon>
-                                                <Face />
+                                                <McFaceViewer uri={this.state.userCache[id].skin} />
                                             </ListItemIcon>
                                             <ListItemText primary={name} secondary='Online' />
                                         </ListItem>
@@ -147,7 +150,7 @@ export default class Home extends Component {
                                 return (
                                     <ListItem button key={reactListKey(index.toFixed(0), name, 'afk')}>
                                         <ListItemIcon>
-                                            <Face />
+                                            <McFaceViewer />
                                         </ListItemIcon>
                                         <ListItemText primary={name} secondary='AFK' />
                                         <ListItemSecondaryAction>
