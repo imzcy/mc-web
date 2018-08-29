@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Route, Switch, Redirect } from "react-router-dom";
 import styles from './App.css';
-import { push, replace } from 'connected-react-router';
+import { push } from 'connected-react-router';
 import { connect } from 'react-redux';
 import url from 'url';
 import { withRouter } from 'react-router-dom';
@@ -25,25 +25,27 @@ class App extends Component {
         value: 0
     }
 
-    handleOnClick = (tab, locReplace) => () => {
-        let { dispatch, views } = this.props;
-        const hrefParsed = url.parse(window.location.href);
+    getPathAtTab(tab) {
+        let { views } = this.props;
         if (tab < 0 ||
             tab >= views.length) {
-            return;
+            throw new Error(`Invalid tab index ${tab}`);
         }
         const { path } = views[tab];
+        return path;
+    }
+
+    handleOnClick = (tab) => () => {
+        let { dispatch } = this.props;
+        const hrefParsed = url.parse(window.location.href);
+        const path = this.getPathAtTab(tab);
         if (hrefParsed.pathname === path) {
             return;
         }
         this.setState({
             tab: tab
         });
-        if (locReplace) {
-            dispatch(replace(path));
-        } else {
-            dispatch(push(path));
-        }
+        dispatch(push(path));
     }
 
     actionTabInit = () => {
@@ -72,7 +74,7 @@ class App extends Component {
                                 <Route key={reactListKey('route', i.toFixed(0))} exact path={v.path} render={(props) => v.render} />
                             ))
                         }
-                        <Route path="/" render={() => { window.setTimeout(this.handleOnClick(0, true), 0); return null}} />
+                        <Route path="/" render={() => <Redirect to={this.getPathAtTab(0)}/>} />
                     </Switch>
                 </main>
                 <BottomNavigation
