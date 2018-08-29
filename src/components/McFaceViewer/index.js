@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
 
 import Face from '@material-ui/icons/Face';
 import fetchImage from '../../utils/fetchImage';
@@ -7,7 +7,7 @@ const steveImg = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAAAgCAYAAACi
 
 const pad2 = t => `0${t.toString(16)}`.substr(-2);
 
-export default class McFaceViewer extends Component {
+export default class McFaceViewer extends PureComponent {
 
     state = {
         imageData: null

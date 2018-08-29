@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Route, Switch, Redirect } from "react-router-dom";
 import styles from './App.css';
-import { push } from 'connected-react-router';
+import { push, replace } from 'connected-react-router';
 import { connect } from 'react-redux';
 import url from 'url';
 import { withRouter } from 'react-router-dom';
@@ -25,7 +25,7 @@ class App extends Component {
         value: 0
     }
 
-    handleOnClick = (tab) => () => {
+    handleOnClick = (tab, locReplace) => () => {
         let { dispatch, views } = this.props;
         const hrefParsed = url.parse(window.location.href);
         if (tab < 0 ||
@@ -39,7 +39,11 @@ class App extends Component {
         this.setState({
             tab: tab
         });
-        dispatch(push(path));
+        if (locReplace) {
+            dispatch(replace(path));
+        } else {
+            dispatch(push(path));
+        }
     }
 
     actionTabInit = () => {
@@ -60,7 +64,7 @@ class App extends Component {
         const { tab } = this.state;
         const { views } = this.props;
         return (
-            <div className="App" style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
+            <div className="App" style={{ display: 'flex', flexDirection: 'column', width: '100%', height: '100%', position: 'fixed' }}>
                 <main style={{ position: 'relative', flex: '1 1 auto', overflowY: 'auto', overflowX: 'hidden' }}>
                     <Switch>
                         {
@@ -68,7 +72,7 @@ class App extends Component {
                                 <Route key={reactListKey('route', i.toFixed(0))} exact path={v.path} render={(props) => v.render} />
                             ))
                         }
-                        <Route path="/" render={() => { window.setTimeout(this.handleOnClick(0), 0); return null}} />
+                        <Route path="/" render={() => { window.setTimeout(this.handleOnClick(0, true), 0); return null}} />
                     </Switch>
                 </main>
                 <BottomNavigation

@@ -1,7 +1,7 @@
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
 import Chunk from './Chunk';
 
-export default class MapViewer extends Component {
+export default class MapViewer extends PureComponent {
 
     state = {
         centerX: 0,
@@ -19,7 +19,7 @@ export default class MapViewer extends Component {
         this.handlerMouseUp = this.onMouseUp.bind(this);
         this.handlerMouseMove = this.onMouseMove.bind(this);
         this.handlerTouchStart = this.onTouchStart.bind(this);
-        this.handlerTouchUp = this.onTouchUp.bind(this);
+        this.handlerTouchEnd = this.onTouchEnd.bind(this);
         this.handlerTouchMove = this.onTouchMove.bind(this);
         this.handlerResize = this.onResize.bind(this);
     }
@@ -37,8 +37,10 @@ export default class MapViewer extends Component {
         this.dragY = e.touches[0].pageY;
     }
 
-    onTouchUp(e) {
-        e.preventDefault();
+    onTouchEnd(e) {
+        if (this.dragStart) {
+            e.preventDefault();
+        }
         this.dragStart = false;
         this.dragX = null;
         this.dragY = null;
@@ -66,7 +68,9 @@ export default class MapViewer extends Component {
     }
 
     onMouseUp(e) {
-        e.preventDefault();
+        if (this.dragStart) {
+            e.preventDefault();
+        }
         this.dragStart = false;
         this.dragX = null;
         this.dragY = null;
@@ -110,13 +114,13 @@ export default class MapViewer extends Component {
             });
         }, 50);
         window.addEventListener('resize', this.handlerResize);
-        this.outerDiv.addEventListener('mousedown', this.handlerMouseDown);
-        document.addEventListener('mousemove', this.handlerMouseMove);
-        document.addEventListener('mouseup', this.handlerMouseUp);
-        this.outerDiv.addEventListener('touchstart', this.handlerTouchStart);
-        document.addEventListener('touchmove', this.handlerTouchMove);
-        document.addEventListener('touchup', this.handlerTouchUp);
-        document.addEventListener('touchcancel', this.handlerTouchUp);
+        this.outerDiv.addEventListener('mousedown', this.handlerMouseDown, { passive: false });
+        document.addEventListener('mousemove', this.handlerMouseMove, { passive: false });
+        document.addEventListener('mouseup', this.handlerMouseUp, { passive: false });
+        this.outerDiv.addEventListener('touchstart', this.handlerTouchStart, { passive: false });
+        document.addEventListener('touchmove', this.handlerTouchMove, { passive: false });
+        document.addEventListener('touchend', this.handlerTouchEnd, { passive: false });
+        document.addEventListener('touchcancel', this.handlerTouchUp, { passive: false });
     }
 
     componentWillUnmount() {
@@ -126,7 +130,7 @@ export default class MapViewer extends Component {
         document.removeEventListener('mouseup', this.handlerMouseUp);
         this.outerDiv.removeEventListener('touchstart', this.handlerTouchStart);
         document.removeEventListener('touchmove', this.handlerTouchMove);
-        document.removeEventListener('touchup', this.handlerTouchUp);
+        document.removeEventListener('touchend', this.handlerTouchEnd);
         document.removeEventListener('touchcancel', this.handlerTouchUp);
     }
 
